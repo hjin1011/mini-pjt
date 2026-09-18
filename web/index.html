@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>오늘의 학습지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Comic+Neue:wght@300;400;700&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="mark" aria-hidden="true"><i class="ph-fill ph-graduation-cap"></i></div>
+      <div class="brand">
+        <span class="wordmark">오늘의 학습지</span>
+        <span class="topbar-date-row">
+          <span class="topbar-date" id="topbar-date"></span>
+          <span class="topbar-today-stars" id="topbar-today-stars">
+            <i class="ph-fill ph-star" aria-hidden="true"></i> <span id="today-stars-value">0</span>개
+          </span>
+        </span>
+      </div>
+      <button type="button" id="parent-toggle-btn" class="parent-toggle-btn">
+        <i id="parent-toggle-icon" class="ph ph-users-three" aria-hidden="true"></i>
+        <span id="parent-toggle-label">부모 화면</span>
+      </button>
+    </header>
+
+    <main id="app" class="app">
+
+      <!-- 1. 학년 선택 화면 -->
+      <section id="screen-grade" class="screen">
+        <p class="eyebrow">시작하기</p>
+        <h1>몇 학년 문제를 풀어볼까?</h1>
+        <div class="star-breakdown" id="grade-star-breakdown" aria-label="지금까지 모은 별"></div>
+        <div class="grade-grid" id="grade-grid" role="group" aria-label="학년 선택"></div>
+      </section>
+
+      <!-- 1b. 과목·난이도 선택 화면 -->
+      <section id="screen-subject" class="screen is-hidden">
+        <p class="eyebrow"><span id="subject-screen-grade-label">3학년</span></p>
+        <h1>어떤 과목을 풀어볼까?</h1>
+        <p class="subject-hint">하나 또는 여러 과목을 골라주세요</p>
+        <div class="subject-row" id="subject-row" role="group" aria-label="과목 선택 (여러 개 선택 가능)">
+          <button type="button" class="subject-tile" data-subject="math" aria-pressed="false">
+            <i class="ph-fill ph-calculator" aria-hidden="true"></i>
+            <span>수학</span>
+          </button>
+          <button type="button" class="subject-tile" data-subject="english" aria-pressed="false">
+            <i class="ph-fill ph-book-open-text" aria-hidden="true"></i>
+            <span>영어</span>
+          </button>
+        </div>
+        <p class="subject-help is-hidden" id="subject-all-done-help">오늘 학습을 모두 마쳤어요! 내일 또 만나요 🎉</p>
+        <div class="difficulty-row" id="difficulty-row" role="group" aria-label="난이도 선택">
+          <button class="chip is-selected" data-difficulty="쉬움">쉬움</button>
+          <button class="chip is-selected" data-difficulty="표준" data-default>표준</button>
+          <button class="chip is-selected" data-difficulty="어려움">어려움</button>
+        </div>
+        <div class="action-row">
+          <button type="button" id="subject-back-btn" class="btn btn--outline">‹ 학년 다시 고르기</button>
+          <button type="button" id="subject-submit-btn" class="btn btn--primary btn--lg" disabled>학습지 만들기</button>
+        </div>
+      </section>
+
+      <!-- 2. 로딩 화면 -->
+      <section id="screen-loading" class="screen is-hidden">
+        <div class="spinner" aria-hidden="true"></div>
+        <p class="loading-text">학습지를 만들고 있어요<span class="dots"><span>.</span><span>.</span><span>.</span></span></p>
+      </section>
+
+      <!-- 3. 문제 풀이 & 결과 화면 (과목을 여러 개 고르면 과목별 패널 + 탭 전환) -->
+      <section id="screen-worksheet" class="screen is-hidden">
+        <div class="worksheet-head">
+          <p class="eyebrow" id="worksheet-meta">3학년 · 표준</p>
+          <h1>문제를 풀고 채점해보자</h1>
+        </div>
+
+        <div class="worksheet-tabs is-hidden" id="worksheet-tabs" role="tablist" aria-label="과목 전환">
+          <button type="button" class="worksheet-tab" data-subject="math" role="tab">
+            <i class="ph-fill ph-calculator" aria-hidden="true"></i> 수학
+          </button>
+          <button type="button" class="worksheet-tab" data-subject="english" role="tab">
+            <i class="ph-fill ph-book-open-text" aria-hidden="true"></i> 영어
+          </button>
+        </div>
+
+        <div class="worksheet-panel" id="panel-math" data-subject="math">
+          <div class="score-banner is-hidden">
+            <span class="score-counter"><span class="score-value">0</span><span class="score-total">/<span class="score-max">10</span></span></span>
+            <p class="score-caption"></p>
+            <p class="score-today-stars"><i class="ph-fill ph-star" aria-hidden="true"></i> 오늘 딴 별 <span class="score-today-stars-value">0</span>개</p>
+          </div>
+          <ol class="problem-list" id="problem-list-math"></ol>
+          <div class="action-row">
+            <button type="button" class="btn btn--primary btn--lg grade-btn" data-subject="math">
+              <span class="btn__label">채점하기</span>
+            </button>
+            <button type="button" class="btn btn--outline restart-btn">다른 학습지 받기</button>
+          </div>
+        </div>
+
+        <div class="worksheet-panel is-hidden" id="panel-english" data-subject="english">
+          <div class="score-banner is-hidden">
+            <span class="score-counter"><span class="score-value">0</span><span class="score-total">/<span class="score-max">10</span></span></span>
+            <p class="score-caption"></p>
+            <p class="score-today-stars"><i class="ph-fill ph-star" aria-hidden="true"></i> 오늘 딴 별 <span class="score-today-stars-value">0</span>개</p>
+          </div>
+          <ol class="problem-list" id="problem-list-english"></ol>
+          <div class="action-row">
+            <button type="button" class="btn btn--primary btn--lg grade-btn" data-subject="english">
+              <span class="btn__label">채점하기</span>
+            </button>
+            <button type="button" class="btn btn--outline restart-btn">다른 학습지 받기</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 부모 화면 -->
+      <section id="screen-parent" class="screen is-hidden">
+        <div class="worksheet-head">
+          <p class="eyebrow">부모 화면</p>
+          <h1>승인 대기 중인 요청</h1>
+        </div>
+        <p class="parent-help">
+          문제 검증이 3회 연속 실패하면 문제은행 대체 승인 요청이 여기에 뜹니다.
+          30초 안에 응답이 없으면 자동으로 대체돼요.
+        </p>
+        <ul id="pending-list" class="pending-list"></ul>
+        <p id="pending-empty" class="pending-empty">지금은 승인 대기 중인 요청이 없어요.</p>
+        <div class="action-row">
+          <button type="button" id="pending-refresh-btn" class="btn btn--outline">
+            <i class="ph ph-arrows-clockwise" aria-hidden="true"></i> 새로고침
+          </button>
+          <button type="button" id="report-open-btn" class="btn btn--outline">
+            <i class="ph ph-chart-bar" aria-hidden="true"></i> 주간 리포트 보기
+          </button>
+          <button type="button" id="wrong-answers-open-btn" class="btn btn--outline">
+            <i class="ph ph-notebook" aria-hidden="true"></i> 오답노트 보기
+          </button>
+          <button type="button" id="parent-back-btn" class="btn btn--primary">아이 화면으로 돌아가기</button>
+        </div>
+      </section>
+
+      <!-- 5. 주간 리포트 (부모 화면 하위) -->
+      <section id="screen-report" class="screen is-hidden">
+        <div class="worksheet-head">
+          <p class="eyebrow" id="report-range">이번 주</p>
+          <h1>주간 리포트</h1>
+        </div>
+
+        <p class="eyebrow report-section-label">누적 별</p>
+        <div class="star-breakdown" id="report-star-breakdown" aria-label="아이가 지금까지 모은 별"></div>
+
+        <label class="week-select-label" for="report-week-select">
+          <i class="ph ph-calendar-blank" aria-hidden="true"></i> 조회할 주
+          <select id="report-week-select" class="week-select"></select>
+        </label>
+
+        <p class="eyebrow report-section-label">과목별 요약</p>
+        <div class="overview-grid" id="report-overview"></div>
+
+        <div id="report-by-subject"></div>
+
+        <div class="difficulty-adjust">
+          <p class="eyebrow report-section-label">난이도 조정</p>
+          <p class="parent-help" id="difficulty-adjust-help">현재 <strong id="current-difficulty-label">표준</strong> 난이도로 진행 중이에요. 다음 학습지부터 적용할 난이도를 골라주세요.</p>
+          <div class="difficulty-row" id="report-difficulty-row" role="group" aria-label="난이도 조정">
+            <button class="chip" data-difficulty="쉬움">쉬움</button>
+            <button class="chip" data-difficulty="표준">표준</button>
+            <button class="chip" data-difficulty="어려움">어려움</button>
+          </div>
+          <p class="difficulty-adjust-confirm is-hidden" id="difficulty-adjust-confirm">
+            <i class="ph-fill ph-check-circle" aria-hidden="true"></i> 다음 학습지부터 반영돼요.
+          </p>
+        </div>
+
+        <div class="action-row">
+          <button type="button" id="report-refresh-btn" class="btn btn--outline">
+            <i class="ph ph-arrows-clockwise" aria-hidden="true"></i> 새로고침
+          </button>
+          <button type="button" id="report-back-btn" class="btn btn--primary">부모 화면으로 돌아가기</button>
+        </div>
+      </section>
+
+      <!-- 6. 오답노트 (부모 화면 하위, 과목별 최대 50개·최신순, 아이 화면엔 노출 안 함) -->
+      <section id="screen-wrong-answers" class="screen is-hidden">
+        <div class="worksheet-head">
+          <p class="eyebrow">부모 화면</p>
+          <h1>오답노트</h1>
+        </div>
+
+        <div class="worksheet-tabs" id="wrong-answers-tabs" role="tablist" aria-label="과목 전환">
+          <button type="button" class="worksheet-tab" data-subject="math" role="tab">
+            <i class="ph-fill ph-calculator" aria-hidden="true"></i> 수학
+          </button>
+          <button type="button" class="worksheet-tab" data-subject="english" role="tab">
+            <i class="ph-fill ph-book-open-text" aria-hidden="true"></i> 영어
+          </button>
+        </div>
+
+        <div class="wrong-answers-panel" id="wrong-panel-math" data-subject="math">
+          <ul class="wrong-answer-list" id="wrong-answer-list-math"></ul>
+          <p class="pending-empty wrong-answers-empty is-hidden">아직 틀린 문제가 없어요. 아주 잘하고 있어요!</p>
+        </div>
+        <div class="wrong-answers-panel is-hidden" id="wrong-panel-english" data-subject="english">
+          <ul class="wrong-answer-list" id="wrong-answer-list-english"></ul>
+          <p class="pending-empty wrong-answers-empty is-hidden">아직 틀린 문제가 없어요. 아주 잘하고 있어요!</p>
+        </div>
+
+        <div class="action-row">
+          <button type="button" id="wrong-answers-refresh-btn" class="btn btn--outline">
+            <i class="ph ph-arrows-clockwise" aria-hidden="true"></i> 새로고침
+          </button>
+          <button type="button" id="wrong-answers-back-btn" class="btn btn--primary">부모 화면으로 돌아가기</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- 부모 화면 PIN 모달 -->
+  <div id="pin-modal" class="modal-backdrop is-hidden">
+    <div class="modal-panel pin-panel" role="dialog" aria-modal="true" aria-label="부모 확인">
+      <div class="modal-head">
+        <span>부모님만 눌러주세요</span>
+        <button type="button" id="pin-cancel" class="btn btn--outline btn--sm">취소</button>
+      </div>
+      <p class="pin-help">4자리 비밀번호를 입력하세요 (기본값: 0000)</p>
+      <input type="password" id="pin-input" class="pin-input" inputmode="numeric" maxlength="4" autocomplete="off" />
+      <p id="pin-error" class="pin-error is-hidden">비밀번호가 틀렸어요. 다시 시도해주세요.</p>
+      <button type="button" id="pin-submit" class="btn btn--primary btn--lg pin-submit">확인</button>
+    </div>
+  </div>
+
+  <!-- 연습장 (그림판) 모달 -->
+  <div id="scratchpad-modal" class="modal-backdrop is-hidden">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-label="연습장">
+      <div class="modal-head">
+        <span id="scratchpad-title">연습장</span>
+        <div class="modal-head-actions">
+          <button type="button" id="scratchpad-clear" class="btn btn--outline btn--sm">지우기</button>
+          <button type="button" id="scratchpad-close" class="btn btn--primary btn--sm">닫기</button>
+        </div>
+      </div>
+      <canvas id="scratchpad-canvas"></canvas>
+    </div>
+  </div>
+
+  <!-- 과목별 상세 리포트 템플릿 (과목이 늘어나도 app.js가 이 템플릿을 과목 수만큼 복제) -->
+  <template id="subject-report-template">
+    <section class="subject-report-block">
+      <h2 class="subject-report-title"></h2>
+      <p class="eyebrow report-section-label">날짜별 정답률</p>
+      <figure class="chart-card">
+        <figcaption class="chart-caption">최근 7일 정답률 (막대를 눌러보세요)</figcaption>
+        <svg class="daily-chart" viewBox="0 0 300 150" role="img" aria-label="최근 7일 날짜별 정답률 막대그래프"></svg>
+        <p class="chart-readout" aria-live="polite">막대를 누르면 그날의 정답률을 볼 수 있어요.</p>
+        <button type="button" class="btn btn--outline btn--sm chart-table-toggle">표로 보기</button>
+        <table class="chart-table is-hidden">
+          <thead><tr><th>날짜</th><th>정답률</th><th>푼 문제 수</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </figure>
+      <p class="eyebrow report-section-label">이번 주 오답 주제</p>
+      <ul class="wrong-topic-list"></ul>
+      <p class="pending-empty wrong-topic-empty">이번 주엔 오답 주제가 없었어요. 아주 잘하고 있어요!</p>
+    </section>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

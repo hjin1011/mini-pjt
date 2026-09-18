@@ -1,0 +1,450 @@
+{
+  "3-표준": [
+    {
+      "question": "I ___ to school every day.",
+      "choices": [
+        "go",
+        "goes",
+        "went",
+        "going"
+      ],
+      "answer": "go",
+      "topic": "현재시제"
+    },
+    {
+      "question": "She ___ a book yesterday.",
+      "choices": [
+        "read",
+        "reads",
+        "reading",
+        "will read"
+      ],
+      "answer": "read",
+      "topic": "과거시제"
+    },
+    {
+      "question": "He is ___ than his brother.",
+      "choices": [
+        "tall",
+        "taller",
+        "tallest",
+        "more tall"
+      ],
+      "answer": "taller",
+      "topic": "비교급"
+    },
+    {
+      "question": "My cat ___ milk every morning.",
+      "choices": [
+        "drink",
+        "drinks",
+        "drinking",
+        "drank"
+      ],
+      "answer": "drinks",
+      "topic": "현재시제"
+    },
+    {
+      "question": "I ___ see a movie last week.",
+      "choices": [
+        "see",
+        "sees",
+        "saw",
+        "will see"
+      ],
+      "answer": "saw",
+      "topic": "과거시제"
+    },
+    {
+      "question": "This apple is ___ than that one.",
+      "choices": [
+        "red",
+        "redder",
+        "reddest",
+        "more red"
+      ],
+      "answer": "redder",
+      "topic": "비교급"
+    },
+    {
+      "question": "Can you ___ me, please?",
+      "choices": [
+        "help",
+        "helps",
+        "helped",
+        "helping"
+      ],
+      "answer": "help",
+      "topic": "기본 어휘"
+    },
+    {
+      "question": "They ___ playing soccer now.",
+      "choices": [
+        "are",
+        "is",
+        "am",
+        "be"
+      ],
+      "answer": "are",
+      "topic": "현재진행형"
+    },
+    {
+      "question": "The elephant is ___ than the mouse.",
+      "choices": [
+        "big",
+        "bigger",
+        "biggest",
+        "more big"
+      ],
+      "answer": "bigger",
+      "topic": "비교급"
+    },
+    {
+      "question": "Yesterday, I ___ to the park with my friends.",
+      "choices": [
+        "go",
+        "went",
+        "going",
+        "goes"
+      ],
+      "answer": "went",
+      "topic": "과거시제"
+    }
+  ],
+  "4-표준": [
+    {
+      "question": "I ___ to school every day.",
+      "choices": [
+        "go",
+        "goes",
+        "going",
+        "went"
+      ],
+      "answer": "go",
+      "topic": "현재시제"
+    },
+    {
+      "question": "She ___ a book yesterday.",
+      "choices": [
+        "read",
+        "reads",
+        "reading",
+        "is read"
+      ],
+      "answer": "read",
+      "topic": "과거시제"
+    },
+    {
+      "question": "My dog is ___ than your dog.",
+      "choices": [
+        "big",
+        "bigger",
+        "biggest",
+        "more big"
+      ],
+      "answer": "bigger",
+      "topic": "비교급"
+    },
+    {
+      "question": "He can ___ English very well.",
+      "choices": [
+        "speak",
+        "speaks",
+        "speaking",
+        "spoke"
+      ],
+      "answer": "speak",
+      "topic": "조동사"
+    },
+    {
+      "question": "There are some books ___ the table.",
+      "choices": [
+        "in",
+        "on",
+        "at",
+        "under"
+      ],
+      "answer": "on",
+      "topic": "전치사"
+    },
+    {
+      "question": "I ___ like ice cream.",
+      "choices": [
+        "am",
+        "do",
+        "is",
+        "have"
+      ],
+      "answer": "do",
+      "topic": "조동사"
+    },
+    {
+      "question": "She ___ three sisters.",
+      "choices": [
+        "have",
+        "has",
+        "having",
+        "had"
+      ],
+      "answer": "has",
+      "topic": "현재시제"
+    },
+    {
+      "question": "This apple is ___ than that one.",
+      "choices": [
+        "red",
+        "redder",
+        "reddest",
+        "more red"
+      ],
+      "answer": "redder",
+      "topic": "비교급"
+    },
+    {
+      "question": "We ___ play soccer tomorrow.",
+      "choices": [
+        "will",
+        "are",
+        "do",
+        "have"
+      ],
+      "answer": "will",
+      "topic": "미래시제"
+    },
+    {
+      "question": "She ___ taller than her brother.",
+      "choices": [
+        "is",
+        "are",
+        "am",
+        "be"
+      ],
+      "answer": "is",
+      "topic": "be동사"
+    }
+  ],
+  "5-표준": [
+    {
+      "question": "I ___ to school every day.",
+      "choices": [
+        "go",
+        "goes",
+        "going",
+        "went"
+      ],
+      "answer": "go",
+      "topic": "현재시제"
+    },
+    {
+      "question": "She ___ a book yesterday.",
+      "choices": [
+        "read",
+        "reads",
+        "reading",
+        "is reading"
+      ],
+      "answer": "read",
+      "topic": "과거시제"
+    },
+    {
+      "question": "My dog is ___ than your cat.",
+      "choices": [
+        "big",
+        "bigger",
+        "biggest",
+        "more big"
+      ],
+      "answer": "bigger",
+      "topic": "비교급"
+    },
+    {
+      "question": "Can you ___ me with my homework?",
+      "choices": [
+        "help",
+        "helps",
+        "helping",
+        "helped"
+      ],
+      "answer": "help",
+      "topic": "조동사·원형동사"
+    },
+    {
+      "question": "The pencil is ___ the desk.",
+      "choices": [
+        "at",
+        "in",
+        "on",
+        "to"
+      ],
+      "answer": "on",
+      "topic": "전치사"
+    },
+    {
+      "question": "I ___ play soccer tomorrow.",
+      "choices": [
+        "will",
+        "am",
+        "do",
+        "have"
+      ],
+      "answer": "will",
+      "topic": "미래시제"
+    },
+    {
+      "question": "He ___ already finished his dinner.",
+      "choices": [
+        "have",
+        "has",
+        "is",
+        "was"
+      ],
+      "answer": "has",
+      "topic": "현재완료"
+    },
+    {
+      "question": "This is the ___ building in the city.",
+      "choices": [
+        "tall",
+        "taller",
+        "tallest",
+        "more tall"
+      ],
+      "answer": "tallest",
+      "topic": "최상급"
+    },
+    {
+      "question": "Would you like ___ apple?",
+      "choices": [
+        "a",
+        "an",
+        "the",
+        "some"
+      ],
+      "answer": "an",
+      "topic": "부정관사"
+    },
+    {
+      "question": "My sister ___ not like spicy food.",
+      "choices": [
+        "do",
+        "does",
+        "did",
+        "is"
+      ],
+      "answer": "does",
+      "topic": "3인칭단수"
+    }
+  ],
+  "6-표준": [
+    {
+      "question": "I ___ to school every day by bus.",
+      "choices": [
+        "go",
+        "went",
+        "am going",
+        "will go"
+      ],
+      "answer": "go",
+      "topic": "현재시제"
+    },
+    {
+      "question": "She ___ her homework yesterday.",
+      "choices": [
+        "do",
+        "does",
+        "did",
+        "doing"
+      ],
+      "answer": "did",
+      "topic": "과거시제"
+    },
+    {
+      "question": "He is ___ than his brother.",
+      "choices": [
+        "tall",
+        "taller",
+        "tallest",
+        "more tall"
+      ],
+      "answer": "taller",
+      "topic": "비교급"
+    },
+    {
+      "question": "I ___ to visit my grandmother next week.",
+      "choices": [
+        "am going",
+        "go",
+        "went",
+        "goes"
+      ],
+      "answer": "am going",
+      "topic": "미래시제"
+    },
+    {
+      "question": "She ___ been to Paris three times.",
+      "choices": [
+        "has",
+        "have",
+        "is",
+        "was"
+      ],
+      "answer": "has",
+      "topic": "현재완료"
+    },
+    {
+      "question": "The ___ is very beautiful today.",
+      "choices": [
+        "weather",
+        "whether",
+        "weathers",
+        "wether"
+      ],
+      "answer": "weather",
+      "topic": "기본 어휘"
+    },
+    {
+      "question": "I like pizza ___ I don't like hamburgers.",
+      "choices": [
+        "and",
+        "but",
+        "or",
+        "because"
+      ],
+      "answer": "but",
+      "topic": "접속사"
+    },
+    {
+      "question": "My sister ___ to school every day by bus.",
+      "choices": [
+        "go",
+        "goes",
+        "going",
+        "went"
+      ],
+      "answer": "goes",
+      "topic": "현재시제"
+    },
+    {
+      "question": "I ___ my homework yesterday afternoon.",
+      "choices": [
+        "do",
+        "does",
+        "did",
+        "doing"
+      ],
+      "answer": "did",
+      "topic": "과거시제"
+    },
+    {
+      "question": "This pizza is ___ than that one.",
+      "choices": [
+        "more delicious",
+        "deliciouser",
+        "most delicious",
+        "delicious"
+      ],
+      "answer": "more delicious",
+      "topic": "비교급"
+    }
+  ]
+}
