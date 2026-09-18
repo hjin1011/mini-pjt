@@ -10,7 +10,7 @@ evaluation/test_queries.csv의 인-아웃 세트를 실제 REACT_AGENT(agent.py)
 - expected_traits·forbidden(의미 판단)은 별도의 독립 LLM 호출(judge_answer)로 채점한다.
   cross_validate_problem이 문제 생성과 별개의 호출로 정오답을 검증하는 것과 같은 패턴이다.
 
-반복 실행 (LLM 비결정성 대비): generate_worksheet·generate_english_worksheet를
+반복 실행 (LLM 비결정성 대비): generate_worksheet·generate_english_worksheet·generate_korean_worksheet를
 유발하는 케이스는 내부적으로 문제 생성(1회)+교차검증(문제당 1회, 최대 10회)까지
 연쇄 호출돼 케이스당 비용이 훨씬 크다. 이 파이프라인 자체의 동작은 이미
 round1·round2와 실제 스모크 테스트로 검증되어 있으므로 1회만 실행하고, 나머지
@@ -42,7 +42,7 @@ REPORT_DIR = Path(__file__).resolve().parent
 # generate_worksheet를 유발하는 케이스는 케이스당 최대 ~12회 Bedrock 호출로 이어져
 # 훨씬 비싸다 (파이프라인 자체 검증은 이미 끝났으므로 1회만). 나머지 가벼운 케이스는
 # LLM 비결정성을 반복 실행으로 확인한다.
-EXPENSIVE_TOOLS = {"generate_worksheet", "generate_english_worksheet"}
+EXPENSIVE_TOOLS = {"generate_worksheet", "generate_english_worksheet", "generate_korean_worksheet"}
 CHEAP_REPEATS = 3
 EXPENSIVE_REPEATS = 1
 

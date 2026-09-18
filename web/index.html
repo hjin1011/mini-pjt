@@ -49,6 +49,10 @@
             <i class="ph-fill ph-calculator" aria-hidden="true"></i>
             <span>수학</span>
           </button>
+          <button type="button" class="subject-tile" data-subject="korean" aria-pressed="false">
+            <i class="ph-fill ph-book-bookmark" aria-hidden="true"></i>
+            <span>국어</span>
+          </button>
           <button type="button" class="subject-tile" data-subject="english" aria-pressed="false">
             <i class="ph-fill ph-book-open-text" aria-hidden="true"></i>
             <span>영어</span>
@@ -83,6 +87,9 @@
           <button type="button" class="worksheet-tab" data-subject="math" role="tab">
             <i class="ph-fill ph-calculator" aria-hidden="true"></i> 수학
           </button>
+          <button type="button" class="worksheet-tab" data-subject="korean" role="tab">
+            <i class="ph-fill ph-book-bookmark" aria-hidden="true"></i> 국어
+          </button>
           <button type="button" class="worksheet-tab" data-subject="english" role="tab">
             <i class="ph-fill ph-book-open-text" aria-hidden="true"></i> 영어
           </button>
@@ -97,6 +104,21 @@
           <ol class="problem-list" id="problem-list-math"></ol>
           <div class="action-row">
             <button type="button" class="btn btn--primary btn--lg grade-btn" data-subject="math">
+              <span class="btn__label">채점하기</span>
+            </button>
+            <button type="button" class="btn btn--outline restart-btn">다른 학습지 받기</button>
+          </div>
+        </div>
+
+        <div class="worksheet-panel is-hidden" id="panel-korean" data-subject="korean">
+          <div class="score-banner is-hidden">
+            <span class="score-counter"><span class="score-value">0</span><span class="score-total">/<span class="score-max">10</span></span></span>
+            <p class="score-caption"></p>
+            <p class="score-today-stars"><i class="ph-fill ph-star" aria-hidden="true"></i> 오늘 딴 별 <span class="score-today-stars-value">0</span>개</p>
+          </div>
+          <ol class="problem-list" id="problem-list-korean"></ol>
+          <div class="action-row">
+            <button type="button" class="btn btn--primary btn--lg grade-btn" data-subject="korean">
               <span class="btn__label">채점하기</span>
             </button>
             <button type="button" class="btn btn--outline restart-btn">다른 학습지 받기</button>
@@ -182,6 +204,9 @@
           <button type="button" id="report-refresh-btn" class="btn btn--outline">
             <i class="ph ph-arrows-clockwise" aria-hidden="true"></i> 새로고침
           </button>
+          <button type="button" id="report-wrong-answers-open-btn" class="btn btn--outline">
+            <i class="ph ph-notebook" aria-hidden="true"></i> 오답노트 보기
+          </button>
           <button type="button" id="report-back-btn" class="btn btn--primary">부모 화면으로 돌아가기</button>
         </div>
       </section>
@@ -197,6 +222,9 @@
           <button type="button" class="worksheet-tab" data-subject="math" role="tab">
             <i class="ph-fill ph-calculator" aria-hidden="true"></i> 수학
           </button>
+          <button type="button" class="worksheet-tab" data-subject="korean" role="tab">
+            <i class="ph-fill ph-book-bookmark" aria-hidden="true"></i> 국어
+          </button>
           <button type="button" class="worksheet-tab" data-subject="english" role="tab">
             <i class="ph-fill ph-book-open-text" aria-hidden="true"></i> 영어
           </button>
@@ -204,6 +232,10 @@
 
         <div class="wrong-answers-panel" id="wrong-panel-math" data-subject="math">
           <ul class="wrong-answer-list" id="wrong-answer-list-math"></ul>
+          <p class="pending-empty wrong-answers-empty is-hidden">아직 틀린 문제가 없어요. 아주 잘하고 있어요!</p>
+        </div>
+        <div class="wrong-answers-panel is-hidden" id="wrong-panel-korean" data-subject="korean">
+          <ul class="wrong-answer-list" id="wrong-answer-list-korean"></ul>
           <p class="pending-empty wrong-answers-empty is-hidden">아직 틀린 문제가 없어요. 아주 잘하고 있어요!</p>
         </div>
         <div class="wrong-answers-panel is-hidden" id="wrong-panel-english" data-subject="english">

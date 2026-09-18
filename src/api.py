@@ -18,7 +18,17 @@ from pydantic import BaseModel
 from src.agent import REACT_AGENT, _ainvoke_with_retry, _pending_approvals, _pending_reasons
 from src.db import get_stars_summary, get_wrong_answers, init_db, log_grade, weekly_report
 from src.retriever import retrieve_reference
-from src.tools import EnglishProblem, MathProblem, generate_english_hint, generate_hint, grade_answer, grade_english_answer
+from src.tools import (
+    EnglishProblem,
+    KoreanProblem,
+    MathProblem,
+    generate_english_hint,
+    generate_hint,
+    generate_korean_hint,
+    grade_answer,
+    grade_english_answer,
+    grade_korean_answer,
+)
 
 app = FastAPI()
 
@@ -57,7 +67,11 @@ async def query(req: QueryRequest) -> QueryResponse:
         if isinstance(message, AIMessage):
             for tool_call in message.tool_calls:
                 trace.append(f"{tool_call['name']}({tool_call['args']})")
-        if isinstance(message, ToolMessage) and message.name in ("generate_worksheet", "generate_english_worksheet"):
+        if isinstance(message, ToolMessage) and message.name in (
+            "generate_worksheet",
+            "generate_english_worksheet",
+            "generate_korean_worksheet",
+        ):
             try:
                 payload = json.loads(message.content)
             except (json.JSONDecodeError, TypeError):
@@ -129,6 +143,9 @@ def grade(req: GradeRequest) -> dict:
     if req.subject == "english":
         problem = EnglishProblem(question=req.question, choices=req.choices, answer=req.correct_answer)
         result = grade_english_answer(problem, req.child_answer, req.used_hint)
+    elif req.subject == "korean":
+        problem = KoreanProblem(question=req.question, choices=req.choices, answer=req.correct_answer)
+        result = grade_korean_answer(problem, req.child_answer, req.used_hint)
     else:
         problem = MathProblem(question=req.question, answer=req.correct_answer)
         result = grade_answer(problem, req.child_answer, req.used_hint)
@@ -169,6 +186,9 @@ def hint(req: HintRequest) -> dict:
     if req.subject == "english":
         problem = EnglishProblem(question=req.question, choices=req.choices, answer=req.correct_answer)
         return {"hint": generate_english_hint(problem, req.grade)}
+    if req.subject == "korean":
+        problem = KoreanProblem(question=req.question, choices=req.choices, answer=req.correct_answer)
+        return {"hint": generate_korean_hint(problem, req.grade)}
     problem = MathProblem(question=req.question, answer=req.correct_answer)
     return {"hint": generate_hint(problem, req.grade)}
 

@@ -15,7 +15,7 @@ from pathlib import Path
 
 DB_PATH = Path(__file__).resolve().parent.parent / "data" / "app.db"
 
-SUBJECTS = ["math", "english"]
+SUBJECTS = ["math", "english", "korean"]
 
 # SERVICE.md 3·4번 오답노트: 과목별로 별도 노트, 노트 하나당 최대 이 개수만 유지한다 (FIFO).
 WRONG_ANSWER_LIMIT = 50

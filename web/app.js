@@ -38,6 +38,7 @@
   const difficultyAdjustConfirm = document.getElementById("difficulty-adjust-confirm");
 
   const wrongAnswersOpenBtn = document.getElementById("wrong-answers-open-btn");
+  const reportWrongAnswersOpenBtn = document.getElementById("report-wrong-answers-open-btn");
   const wrongAnswersBackBtn = document.getElementById("wrong-answers-back-btn");
   const wrongAnswersRefreshBtn = document.getElementById("wrong-answers-refresh-btn");
   const wrongAnswersTabs = document.getElementById("wrong-answers-tabs");
@@ -64,6 +65,7 @@
   // 채점 버튼·점수 배너를 따로 갖는다.
   const PANELS = {
     math: { panel: document.getElementById("panel-math"), list: document.getElementById("problem-list-math") },
+    korean: { panel: document.getElementById("panel-korean"), list: document.getElementById("problem-list-korean") },
     english: { panel: document.getElementById("panel-english"), list: document.getElementById("problem-list-english") },
   };
   Object.values(PANELS).forEach((refs) => {
@@ -89,7 +91,7 @@
   let activeSubjects = [];
   let activeTab = "math";
   /** @type {Record<string, {problems: object[], attemptId: string|null}|null>} 과목별 학습지 데이터 */
-  let worksheets = { math: null, english: null };
+  let worksheets = { math: null, english: null, korean: null };
   let currentGrade = 3;
   /** @type {Record<number, string>} 문제 index -> 캔버스 dataURL (연습장 낙서 보관용, 수학 전용) */
   let scratchpadData = {};
@@ -104,18 +106,20 @@
   // 모든 과목을 다 받아서 다 풀기 전엔 새 학습지를 못 받는다). 서버 강제는 없는 프론트 UX
   // 가드라 새로고침하면 초기화된다 — 날짜가 바뀌면(자정) 로컬 자정 기준으로 다시 초기화한다.
   let sessionDate = new Date().toDateString();
-  let subjectDone = { math: false, english: false };
+  let subjectDone = { math: false, english: false, korean: false };
 
   function checkDayRollover() {
     const today = new Date().toDateString();
     if (today !== sessionDate) {
       sessionDate = today;
-      subjectDone = { math: false, english: false };
+      subjectDone = { math: false, english: false, korean: false };
     }
   }
 
   function subjectLabel(subject) {
-    return subject === "english" ? "영어" : "수학";
+    if (subject === "english") return "영어";
+    if (subject === "korean") return "국어";
+    return "수학";
   }
 
   const topbarDateEl = document.getElementById("topbar-date");
@@ -163,6 +167,10 @@
       `;
       container.appendChild(group);
     });
+    const totalEl = document.createElement("span");
+    totalEl.className = "star-total";
+    totalEl.textContent = `총 ${total.toLocaleString()}개`;
+    container.appendChild(totalEl);
   }
 
   async function fetchStars() {
@@ -217,12 +225,14 @@
     subjectScreenGradeLabel.textContent = `${grade}학년`;
 
     const mathTile = subjectRow.querySelector('[data-subject="math"]');
+    const koreanTile = subjectRow.querySelector('[data-subject="korean"]');
     const englishTile = subjectRow.querySelector('[data-subject="english"]');
     englishTile.classList.toggle("is-hidden", grade < ENGLISH_MIN_GRADE);
     mathTile.disabled = subjectDone.math;
+    koreanTile.disabled = subjectDone.korean;
     englishTile.disabled = subjectDone.english;
 
-    const eligibleSubjects = grade < ENGLISH_MIN_GRADE ? ["math"] : ["math", "english"];
+    const eligibleSubjects = grade < ENGLISH_MIN_GRADE ? ["math", "korean"] : ["math", "korean", "english"];
     const allDone = eligibleSubjects.every((s) => subjectDone[s]);
     subjectAllDoneHelp.classList.toggle("is-hidden", !allDone);
     subjectSubmitBtn.disabled = true;
@@ -235,9 +245,9 @@
     showScreen("subject");
   }
 
-  // 과목은 여러 개 동시에 고를 수 있다 (토글) — 고른 순서와 무관하게 항상 수학을 먼저,
-  // 영어를 나중에 생성한다 (SUBJECT_ORDER).
-  const SUBJECT_ORDER = ["math", "english"];
+  // 과목은 여러 개 동시에 고를 수 있다 (토글) — 고른 순서와 무관하게 항상 수학 →
+  // 국어 → 영어 순으로 생성한다 (SUBJECT_ORDER).
+  const SUBJECT_ORDER = ["math", "korean", "english"];
 
   function bindSubjectTiles() {
     subjectRow.querySelectorAll(".subject-tile").forEach((tile) => {
@@ -304,7 +314,7 @@
 
     currentGrade = grade;
     activeSubjects = subjects;
-    worksheets = { math: results.math || null, english: results.english || null };
+    worksheets = { math: results.math || null, english: results.english || null, korean: results.korean || null };
     worksheetMeta.textContent = `${grade}학년 · ${difficulty}`;
 
     subjects.forEach((subject) => renderWorksheetPanel(subject, worksheets[subject].problems));
@@ -330,8 +340,12 @@
     });
   }
 
+  /** 문제 하나에 보기(choices)가 있으면 객관식, 없으면 단답형이다 (국어는 한 학습지 안에 둘이 섞여 있다). */
+  function hasChoices(problem) {
+    return Array.isArray(problem.choices) && problem.choices.length > 0;
+  }
+
   function renderWorksheetPanel(subject, problems) {
-    const isEnglish = subject === "english";
     const refs = PANELS[subject];
     refs.list.innerHTML = "";
     refs.gradeBtn.disabled = false;
@@ -345,21 +359,22 @@
       li.dataset.index = String(index);
       li.dataset.hintUsed = "false";
 
-      // 영어(4지선다)는 보기를 질문 바로 아래 한 줄로 두는 게 가독성이 좋아서
-      // question-block 안에 중첩한다 (수학의 <input>은 질문과 같은 줄, 카드 오른쪽에 둔다)
-      const choiceGroupHtml = isEnglish
+      // 보기가 있는 문제(영어, 국어 객관식)는 보기를 질문 바로 아래 한 줄로 두는 게
+      // 가독성이 좋아서 question-block 안에 중첩한다 (단답형의 <input>은 질문과 같은
+      // 줄, 카드 오른쪽에 둔다). 연습장은 수학 전용으로 유지한다(SERVICE.md 4번).
+      const isChoice = hasChoices(problem);
+      const choiceGroupHtml = isChoice
         ? `<div class="choice-group" role="radiogroup" aria-label="${index + 1}번 문제 보기">
-            ${(problem.choices || [])
+            ${problem.choices
               .map((c) => `<button type="button" class="choice-btn" data-choice="${escapeHtml(c)}">${escapeHtml(c)}</button>`)
               .join("")}
           </div>`
         : "";
-      const answerControl = isEnglish
+      const answerControl = isChoice
         ? ""
         : `<input type="text" inputmode="text" autocomplete="off" aria-label="${index + 1}번 문제 답" />`;
-      const padButton = isEnglish
-        ? ""
-        : `<button type="button" class="pad-btn"><i class="ph ph-pencil-simple" aria-hidden="true"></i> 연습장</button>`;
+      const padButton =
+        subject === "math" ? `<button type="button" class="pad-btn"><i class="ph ph-pencil-simple" aria-hidden="true"></i> 연습장</button>` : "";
 
       li.innerHTML = `
         <span class="num">${index + 1}</span>
@@ -376,14 +391,14 @@
         <span class="feedback"></span>
       `;
       li.querySelector(".hint-btn").addEventListener("click", (e) => showHint(subject, li, problem, e.currentTarget));
-      if (isEnglish) {
+      if (isChoice) {
         li.querySelectorAll(".choice-btn").forEach((btn) => {
           btn.addEventListener("click", () => {
             li.querySelectorAll(".choice-btn").forEach((b) => b.classList.remove("is-selected"));
             btn.classList.add("is-selected");
           });
         });
-      } else {
+      } else if (subject === "math") {
         li.querySelector(".pad-btn").addEventListener("click", () => openScratchpad(index));
       }
       refs.list.appendChild(li);
@@ -402,7 +417,7 @@
         grade: currentGrade,
         subject,
       };
-      if (subject === "english") body.choices = problem.choices || [];
+      if (hasChoices(problem)) body.choices = problem.choices;
       const res = await fetch("/hint", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -431,7 +446,6 @@
 
   async function gradeSubjectPanel(subject) {
     const refs = PANELS[subject];
-    const isEnglish = subject === "english";
     refs.gradeBtn.disabled = true;
     refs.gradeBtn.querySelector(".btn__label").textContent = "채점 중...";
 
@@ -445,8 +459,9 @@
       const problem = problems[index];
       const feedbackEl = card.querySelector(".feedback");
       const usedHint = card.dataset.hintUsed === "true";
+      const isChoice = hasChoices(problem);
       let childAnswer;
-      if (isEnglish) {
+      if (isChoice) {
         const selected = card.querySelector(".choice-btn.is-selected");
         childAnswer = selected ? selected.dataset.choice : "";
       } else {
@@ -471,7 +486,7 @@
           topic: problem.topic || "",
           subject,
         };
-        if (isEnglish) body.choices = problem.choices || [];
+        if (isChoice) body.choices = problem.choices;
         const res = await fetch("/grade", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -528,11 +543,12 @@
   }
 
   function hasUnansweredInPanel(subject) {
+    const { problems } = worksheets[subject] || {};
     const cards = Array.from(PANELS[subject].list.querySelectorAll(".problem-card"));
-    if (subject === "english") {
-      return cards.some((card) => !card.querySelector(".choice-btn.is-selected"));
-    }
-    return cards.some((card) => card.querySelector("input").value.trim() === "");
+    return cards.some((card) => {
+      const problem = problems[Number(card.dataset.index)];
+      return hasChoices(problem) ? !card.querySelector(".choice-btn.is-selected") : card.querySelector("input").value.trim() === "";
+    });
   }
 
   function hasAnyUnanswered() {
@@ -549,7 +565,7 @@
       subjectDone[s] = true;
     });
     activeSubjects = [];
-    worksheets = { math: null, english: null };
+    worksheets = { math: null, english: null, korean: null };
     openSubjectScreen(currentGrade);
   }
 
@@ -997,6 +1013,7 @@
   function setActiveWrongAnswersTab(subject) {
     activeWrongAnswersSubject = subject;
     document.getElementById("wrong-panel-math").classList.toggle("is-hidden", subject !== "math");
+    document.getElementById("wrong-panel-korean").classList.toggle("is-hidden", subject !== "korean");
     document.getElementById("wrong-panel-english").classList.toggle("is-hidden", subject !== "english");
     wrongAnswersTabs.querySelectorAll(".worksheet-tab").forEach((tab) => {
       tab.classList.toggle("is-active", tab.dataset.subject === subject);
@@ -1066,6 +1083,7 @@
   bindReportDifficultyChips();
 
   wrongAnswersOpenBtn.addEventListener("click", openWrongAnswers);
+  reportWrongAnswersOpenBtn.addEventListener("click", openWrongAnswers);
   wrongAnswersBackBtn.addEventListener("click", closeWrongAnswers);
   wrongAnswersRefreshBtn.addEventListener("click", () => fetchWrongAnswers(activeWrongAnswersSubject));
   wrongAnswersTabs.querySelectorAll(".worksheet-tab").forEach((tab) => {
